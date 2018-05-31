@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FlimServiceService } from '../service/flim-service.service'
 
 @Component({
   selector: 'app-nav-bar',
@@ -6,10 +7,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./nav-bar.component.css']
 })
 export class NavBarComponent implements OnInit {
-
-  constructor() { }
+  cartCount:number;
+  constructor(private cartLengthService:FlimServiceService) { }
 
   ngOnInit() {
+    this.cartLengthService.getEmittedValue().subscribe(item => {
+      console.log('Getting Length:: '+JSON.stringify(item.cartLength))
+      this.cartCount = item.cartLength;
+    });
   }
-
+  
 }

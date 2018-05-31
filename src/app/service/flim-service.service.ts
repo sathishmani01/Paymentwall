@@ -1,24 +1,29 @@
-import { Injectable } from '@angular/core';
+import { Injectable,Output,EventEmitter } from '@angular/core';
 import {Http, Response } from '@angular/http';
 import 'rxjs/add/operator/map';
 
 
 @Injectable()
 export class FlimServiceService {
-  private apiUrl ='http://swapi.co/api/people';
-  
+  private apiUrl ='http://starlord.hackerearth.com/beercraft';
+  @Output() fire:EventEmitter<any>=new EventEmitter();
   constructor(private http:Http) { 
     console.log('From Flim Service..')
   }
   
-  getFlimData(){
+  getBeersData(){
     return this.http.get(this.apiUrl).map((res :Response) => res.json());
   }
-  getFlimtitleCount(){
-    return this.http.get('https://swapi.co/api/films/').map((res:Response)=>res.json());
-  }
-  loadEachTitle(url){
-    return this.http.get(url).map((res:Response)=>res.json());
-  }
+
+  change(data)
+   {
+     console.log('service data'+JSON.stringify(data))
+     this.fire.emit(data);
+   }
+  getEmittedValue()
+   {
+     return this.fire;
+   }  
+
 }
 

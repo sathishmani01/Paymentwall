@@ -1,0 +1,129 @@
+<div class="container">
+  <h4>Dashboard</h4>
+  <div class="col-md-12 col-lg-12" style="padding:0">
+
+    <div class="panel panel-default">
+      <div class="panel-body pannel-padding-left">
+        <h5 class="search-style">Search Filter</h5>
+        <div class="col-md-3 col-lg-3" style="width: 22%;">
+          <h6>Name:</h6>
+          <input type="text" [(ngModel)]="searchText" class="form-control" style="width:180px;" placeholder="Search By Name">
+        </div>
+        <div class="col-md-3 col-lg-3" style="width: 22%;">
+          <h6>Sort By ABV:</h6>
+          <p-dropdown placeholder="Select a abv" [options]="orderOptionList" [filter]="false" (onChange)="selectSortType($event)" [style]="{'width':'180px',height:'30px','overflow':'visible'}">
+            <ng-template let-typeOrder pTemplate="item">
+              <div class="ui-helper-clearfix" style="position: relative;min-height: 25px;">
+                <div style="font-size:13px;float:right;margin-top:4px;text-align:right">{{typeOrder.label}}</div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+        <div class="col-md-3 col-lg-3" style="width: 22%;">
+          <h6>Sort Beers By Style:</h6>
+          <p-dropdown placeholder="Select a Style" [options]="platformOptionList" [filter]="true" (onChange)="selectStyleNameType($event)"
+            [style]="{'width':'180px',height:'30px','overflow':'visible'}">
+            <ng-template let-platformType pTemplate="item">
+              <div class="ui-helper-clearfix" style="position: relative;min-height: 25px;">
+                <div style="font-size:13px;float:right;margin-top:4px;text-align:right">{{platformType.label}}</div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+        <div class="col-md-3 col-lg-3" style="width: 22%;">
+          <h6>Search Beers By Name:</h6>
+          <p-autoComplete name="games" #GamesSearch="ngModel" [(ngModel)]="beersSearch" [suggestions]="beersArray" (completeMethod)="searchGameNames($event)"
+            (onSelect)="selectedGameName($event)" [minLength]="1" placeholder="Select Games Title" field="name" emptyMessage="No Record Found"
+            [multiple]="false">
+          </p-autoComplete>
+        </div>
+        <div class="col-md-1 col-lg-1">
+          <h6>Reset:</h6>
+          <button type="button" style="padding:3px 12px;" (click)="getbackData($event)" class="btn btn-success">Clear</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  <div class="col-md-12 col-lg-12" style="padding:0px" id="tableaAlign">
+
+    <div class="panel panel-default pannel-default-bottom">
+      <div class="panel-body" style="overflow: hidden">
+        <div class="row">
+          <div class="loadspins" *ngIf="loadSaveSpinner">
+            <i class="fa fa-circle-o-notch fa-spin" style="font-size:24px;position:absolute;top:45px;color:#0269c2"></i>
+          </div>
+          <div class="col-lg-3" style="margin:15px 20px;width:20.6%" *ngFor="let item of beersDetailsArray | userSearch:searchText | paginate: { itemsPerPage: searchResultsPerPage, currentPage: currentPage}; let i =index;" [ngSwitch]="item.style">
+            <div class="card" style="width: 26rem;">
+              <img *ngSwitchCase="'American Pale Lager'"  class="card-img-top" src="/assets/resources/images/beer-card-one.png" alt="Beer image" />
+              <img *ngSwitchCase="'American Pale Ale (APA)'"  class="card-img-top" src="/assets/resources/images/beer-card-two.png" alt="Beer image" />
+              <img *ngSwitchCase="'American IPA'" class="card-img-top" src="/assets/resources/images/beer-card-three.png" alt="Beer image" />
+              <img *ngSwitchDefault class="card-img-top" src="/assets/resources/images/beer-card.png" alt="Beer image" />
+              <div class="card-body">
+                <h5 class="card-title txt-elipses">{{item.name}}</h5>
+                <p class="card-text">
+                  <span>abv</span> :{{item.abv}}</p>
+                <p class="card-text">
+                  <span>ibu</span> :{{item.ibu}}</p>
+                <p class="card-text">
+                  <span>ounces</span> :{{item.ounces}}</p>
+                <div class="style-names">
+                  <span>style</span>
+                  <p class="txt-elipses">:{{item.style}}</p>
+                </div>
+                <a href="#" (click)="AddtoCart(item,i)" data-toggle="modal" data-target="#myModal" class="btn btn-primary" style="width:100%;background:#ff9f00">
+                  <span class="glyphicon glyphicon-shopping-cart" style="margin-right:5px;"></span>ADD TO CART</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <pagination-controls *ngIf="beersDetailsArray.length !=0" class="pagination-cursor pull-right mr-r-100" (pageChange)="currentPage = $event"></pagination-controls>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div *ngIf="!closeModel" class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog" style="z-index:10000">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">MY CART ( {{cartDeatilsArray.length}} )</h4>
+        </div>
+        <div class="modal-body" style="height:350px;overflow:scroll;">
+          <div *ngFor="let x of cartDeatilsArray; let i = index;" [ngSwitch]="x.style" class="item-divide">
+            <div class="col-lg-3" style="text-align:center;width:28%;">
+                <img *ngSwitchCase="'American Pale Lager'"  class="card-img-top-cart" src="/assets/resources/images/beer-icon-one.png" alt="Beer image" />
+                <img *ngSwitchCase="'American Pale Ale (APA)'"  class="card-img-top-cart" src="/assets/resources/images/beer-icon-two.png" alt="Beer image" />
+                <img *ngSwitchCase="'American IPA'" class="card-img-top-cart" src="/assets/resources/images/beer-icon.png" alt="Beer image" />
+                <img *ngSwitchDefault class="card-img-top-cart" src="/assets/resources/images/beer-icon.png" alt="Beer image" />
+              <div class="panel-title col-lg-12" style="margin:10px 0;">
+                <button (click)="removeRequestedQuantity(x,i)" type="button" class="btn btn-default ince-icon" style="padding:0;">
+                  <span class="glyphicon glyphicon-minus" style="top:-1px;font-size:12px;"></span>
+                </button>
+                <span style="margin:0 12px;">{{x.reqquantity}}</span>
+                <button (click)="AddRequestedQuantity(x,i);" type="button" class="btn btn-default ince-icon" style="padding:0;">
+                  <span class="glyphicon glyphicon-plus" style="top:-1px;font-size:12px;"></span>
+                </button>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <p>
+                <b>{{x.name}}</b>
+              </p>
+            </div>
+            <div class="col-lg-3">
+              <span (click)="removeItemFromCart(x,i);" class="glyphicon glyphicon-trash" style="float:right;cursor:pointer"></span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" style="background: #fb641b;color:#fff" data-dismiss="modal">PLACE ORDER</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">CANCEL</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

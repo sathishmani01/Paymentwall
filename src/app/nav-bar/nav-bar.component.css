@@ -11,7 +11,22 @@
     background-color: transparent;
     color: #FFF;
 }
-
+.cartcount{
+    position: absolute;
+    left: 19px;
+    bottom: 12px;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    background-color: #ff6161;
+    border: solid 1px #fff;
+    font-weight: 400;
+    color: #f0f0f0;
+    line-height: 16px;
+    font-size: 12px;
+    top: 2px;
+    text-align: center;
+}
 
 
 

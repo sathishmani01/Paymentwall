@@ -1,1 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+body  {
+    background-image: url("http://kb4images.com/images/beer-wallpaper/37867228-beer-wallpaper.jpg");
+    background-color: #cccccc;
+}
